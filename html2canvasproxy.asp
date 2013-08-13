@@ -5,10 +5,7 @@
 	'Released under the MIT license
 
 	'usage variables
-	Dim serr, xmlHttp, url, callback, absolutePath, tmpName, fileName, oas, objFSO
-
-	'setup variables
-	Dim PATH, CCACHE
+	Dim serr, xmlHttp, url, callback, absolutePath, tmpName, fileName, oas, objFSO, PATH, CCACHE
 
 	'Setup
 	PATH = "images"
@@ -67,9 +64,7 @@
 	End Function
 
 	Function JSENCODE(s)
-		'Based in VBS JSON 2.0.3
-		'Copyright (c) 2009 Tuðrul Topuz
-		'Under the MIT license.
+		'Based in VBS JSON 2.0.3, Copyright (c) 2009 Tuðrul Topuz, Under the MIT license.
 
 		Dim a(127), b()
 		a(8)  = "\b"
@@ -153,13 +148,15 @@
 					fileName = FILE_EXISTS(0)
 					tmpName = tmpName & "\" & fileName
 
-					'save responseBody to path
 					oas.SaveToFile tmpName
 					oas.Close
 					Set oas = Nothing
 
 					If objFSO.Fileexists(tmpName) Then
+						Response.AddHeader "Cache-control", "public, max-age=" & CCACHE
+						Response.AddHeader "Pragma", "max-age=" & CCACHE
 						Response.Expires = Round(CCACHE/60)
+
 						Response.Write callback & "(""" & JSENCODE(FULL_URL() & PATH & "/" & fileName) & """);"
 						Response.End()
 					Else
