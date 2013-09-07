@@ -1,11 +1,11 @@
 <%@ Language=vbScript Debug=true EnableSessionState=false %><%
-	'html2canvas-csharp-proxy 0.0.1
+	'html2canvas-asp-vbscript-proxy 0.0.2
 	'Copyright (c) 2013 Guilherme Nascimento (brcontainer@yahoo.com.br)
 	'
 	'Released under the MIT license
 
 	'usage variables
-	Dim serr, xmlHttp, url, callback, absolutePath, tmpName, fileName, oas, objFSO, PATH, CCACHE
+	Dim serr, xmlHttp, url, callback, absolutePath, tmpName, fileName, mime, oas, objFSO, PATH, CCACHE
 
 	'Setup
 	PATH = "images"
@@ -51,14 +51,14 @@
 		End If
 	End Function
 
-	Function FILE_EXISTS(s)
+	Function FILE_EXISTS(s, e)
 		If s = 0 Then
-			FILE_EXISTS = FILE_EXISTS(DateDiff("s","01/01/1970 00:00:00", Now()))
+			FILE_EXISTS = FILE_EXISTS(DateDiff("s","01/01/1970 00:00:00", Now()), e)
 		Else
-			If objFSO.Fileexists(s) Then
-				FILE_EXISTS = FILE_EXISTS(s+1)
+			If objFSO.Fileexists(s & "." & e) Then
+				FILE_EXISTS = FILE_EXISTS(s+1) & "." & e
 			Else
-				FILE_EXISTS = s
+				FILE_EXISTS = s & "." & e
 			End If
 		End If
 	End Function
@@ -136,31 +136,55 @@
 
 					Set oas = CreateObject("ADODB.Stream")
 					oas.Open
-					oas.Type = 1
+					oas.Type = 1 'adTypeBinary
 
 					oas.Write xmlHttp.ResponseBody
-					oas.Position = 0
+					oas.Position = 0 'Set the stream position to the start
 
 					Set objFSO = Createobject("Scripting.FileSystemObject")
 
 					DELETE_OLD_FILES(absolutePath & "\" & PATH)
 
-					fileName = FILE_EXISTS(0)
-					tmpName = tmpName & "\" & fileName
+					mime = Trim(xmlHttp.getAllResponseHeaders)
+					mime = Replace(Replace(LCASE(mime), CHR(13), CHR(10)), CHR(10), "|")
 
-					oas.SaveToFile tmpName
-					oas.Close
-					Set oas = Nothing
+					Dim counter, myArray
+					myArray = Split(mime,"|")
+					mime = ""
 
-					If objFSO.Fileexists(tmpName) Then
-						Response.AddHeader "Cache-control", "public, max-age=" & CCACHE
-						Response.AddHeader "Pragma", "max-age=" & CCACHE
-						Response.Expires = Round(CCACHE/60)
+					For counter = 0 To UBound(myArray)
+						If INSTR(myArray(counter),"content-type:")=1 Then
+							mime = Trim(Replace(Replace(myArray(counter),"content-type:",""),"/x-","/"))
+						End If
+					Next
 
-						Response.Write callback & "(""" & JSENCODE(FULL_URL() & PATH & "/" & fileName) & """);"
-						Response.End()
+					If mime="" Then
+						serr="No such mime-type"
+					ElseIf INSTR("|image/jpeg|image/jpg|image/png|image/gif|text/html|application/xhtml|application/xhtml+xml|", "|" & mime & "|")=0 Then
+						serr="Invalid mime-type"
 					Else
-						serr = "Não pode criar o arquivo " & tmpName
+						mime = Replace(Replace(Replace(mime, "image/",""), "text/",""), "application/","")
+						mime = Replace(mime, "xhtml+xml","xhtml")
+
+						fileName = FILE_EXISTS(0,mime)
+						tmpName = tmpName & "\" & fileName
+
+						'save responseBody to path
+						oas.SaveToFile tmpName
+						oas.Close
+						Set oas = Nothing
+
+						If objFSO.Fileexists(tmpName) Then
+							Response.AddHeader "Cache-control", "public, max-age=" & CCACHE
+							Response.AddHeader "Pragma", "max-age=" & CCACHE
+							Response.Expires = Round(CCACHE/60)
+
+							Set objFSO = Nothing
+							Response.Write callback & "(""" & JSENCODE(FULL_URL() & PATH & "/" & fileName) & """);"
+							Response.End()
+						Else
+							serr = "Não pode criar o arquivo " & tmpName
+						End If
 					End If
 
 					Set objFSO = Nothing
@@ -177,6 +201,8 @@
 
 	If err <> 0 Then
 		serr = err.Description
+	ElseIf serr="" Then
+		serr = "unknown error, maybe the server from url is not available"
 	End If
 
 	If serr <> "" Then
