@@ -1,4 +1,4 @@
-html2canvas-asp-vbscript-proxy 0.0.1
+html2canvas-asp-vbscript-proxy 0.0.2
 =====================
 
 #### Vbscript (asp classic) Proxy html2canvas ####
