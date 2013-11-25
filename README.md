@@ -1,4 +1,4 @@
-html2canvas-asp-vbscript-proxy 0.0.2
+html2canvas-asp-vbscript-proxy 0.0.3
 =====================
 
 #### Vbscript (asp classic) Proxy html2canvas ####
@@ -37,7 +37,10 @@ for a new image, a security error occurs (actually occurs is a security lock), w
 	</head>
 	<body>
 		<p>
-			<img alt="google maps static" src="http://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&zoom=12&size=400x400&maptype=roadmap&sensor=false">
+			<img alt="google maps static" src="http://maps.googleapis.com/maps/api/staticmap?center=40.714728,-73.998672&amp;zoom=12&amp;size=400x400&amp;maptype=roadmap&amp;sensor=false">
+		</p>
+		<p>
+			<img alt="facebook https image redirect" src="https://graph.facebook.com/1415773021975267/picture">
 		</p>
 	</body>
 </html>
