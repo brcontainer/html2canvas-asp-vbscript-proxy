@@ -1,5 +1,5 @@
 <%@ Language=vbScript Debug=true EnableSessionState=false %><%
-	'html2canvas-asp-vbscript-proxy 0.0.2
+	'html2canvas-asp-vbscript-proxy 0.0.3
 	'Copyright (c) 2013 Guilherme Nascimento (brcontainer@yahoo.com.br)
 	'
 	'Released under the MIT license
@@ -12,14 +12,21 @@
 	CCACHE = 60 * 5 * 1000 'Limit access-control, cache-control, delete old files
 
 	Function FULL_URL()
-		Dim a, b
+		Dim a, b, c, d
 		a = ""
-		If Request.ServerVariables("SERVER_PORT")="443" Then
+		c = Request.ServerVariables("SERVER_PORT")
+		d = Request.ServerVariables("HTTP_HOST")
+
+		If c="443" Then
 			a = a & "https://"
 		Else
 			a = a & "http://"
 		End If
-		a = a & Request.ServerVariables("REMOTE_HOST")
+		a = a & d
+
+		If c<>"80" AND c<>"443" AND INSTR(d,":")=0 Then
+			a = a & ":" & c
+		End If
 		
 		b = Split(Request.ServerVariables("URL"),"/")
 		b(Ubound(b))=""
