@@ -45,3 +45,11 @@ for a new image, a security error occurs (actually occurs is a security lock), w
 	</body>
 </html>
 ```
+
+### Others scripting language ###
+
+You do not use PHP, but need html2canvas working with proxy, see other proxies:
+
+* [html2canvas proxy in php](https://github.com/brcontainer/html2canvas-php-proxy)
+* [html2canvas proxy in asp.net (csharp)](https://github.com/brcontainer/html2canvas-csharp-proxy)
+
