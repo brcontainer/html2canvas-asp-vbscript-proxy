@@ -6,6 +6,14 @@ html2canvas-asp-vbscript-proxy 0.0.3
 This script allows you to use html2canvas.js with different servers, ports and protocols (http, https),
 preventing to occur "tainted" when exporting the `<canvas>` for image.
 
+### Others scripting language ###
+
+You do not use ASP Classic, but need html2canvas working with proxy, see other proxies:
+
+* [html2canvas proxy in php](https://github.com/brcontainer/html2canvas-php-proxy)
+* [html2canvas proxy in asp.net (csharp)](https://github.com/brcontainer/html2canvas-csharp-proxy)
+* [html2canvas proxy in python (work any framework)](https://github.com/brcontainer/html2canvas-proxy-python)
+
 ###Problem and Solution###
 When adding an image that belongs to another domain in `<canvas>` and after that try to export the canvas
 for a new image, a security error occurs (actually occurs is a security lock), which can return the error:
@@ -84,11 +92,3 @@ An alternative is to diagnose problems accessing the link directly:
 Replace `[DOMAIN]` by your domain (eg. 127.0.0.1) and replace `[PATH]` by your project folder (eg. project-1/test), something like:
 
 `http://localhost/project-1/test/html2canvasproxy.php?url=http%3A%2F%2Fmaps.googleapis.com%2Fmaps%2Fapi%2Fstaticmap%3Fcenter%3D40.714728%2C-73.998672%26zoom%3D12%26size%3D800x600%26maptype%3Droadmap%26sensor%3Dfalse%261&callback=html2canvas_0`
-
-### Others scripting language ###
-
-You do not use ASP Classic, but need html2canvas working with proxy, see other proxies:
-
-* [html2canvas proxy in php](https://github.com/brcontainer/html2canvas-php-proxy)
-* [html2canvas proxy in asp.net (csharp)](https://github.com/brcontainer/html2canvas-csharp-proxy)
-
